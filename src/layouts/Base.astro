@@ -13,6 +13,7 @@ import fontSerifCyr from '@fontsource/cormorant-garamond/files/cormorant-garamon
 
 import { getImage } from 'astro:assets';
 import { site } from '../data/site';
+import { url } from '../utils/url';
 
 interface Props {
   title?: string;
@@ -34,7 +35,7 @@ const jsonLd = {
   '@type': 'NailSalon',
   name: `${site.name} — ${site.tagline}`,
   description: site.description,
-  url: Astro.site?.toString(),
+  url: new URL(url(), Astro.site).toString(),
   image: ogUrl.toString(),
   telephone: site.phoneHref.replace('tel:', ''),
   priceRange: '1600–6800 ₽',
@@ -68,7 +69,7 @@ const jsonLd = {
     <link rel="preload" href={fontSansCyr} as="font" type="font/woff2" crossorigin />
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={url('favicon.svg')} type="image/svg+xml" />
     <meta name="theme-color" content="#fbf7f3" />
 
     <meta property="og:type" content="website" />

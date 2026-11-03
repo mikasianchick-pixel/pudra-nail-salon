@@ -2,8 +2,9 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  // Адрес сайта: нужен для canonical и превью в соцсетях. Заменить на реальный домен при публикации.
-  site: 'https://pudra-nails.example',
+  // Адрес сайта на GitHub Pages: домен + подпапка с именем репозитория
+  site: 'https://mikasianchick-pixel.github.io',
+  base: '/pudra-nail-salon',
   // В Astro 7 по умолчанию 'jsx' — он может «склеивать» слова между тегами. Включаем классическое сжатие.
   compressHTML: true,
   build: {

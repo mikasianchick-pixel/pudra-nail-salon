@@ -5,6 +5,7 @@
  * Для настоящего салона: подключить виджет YCLIENTS/DIKIDI или отправку заявки в Telegram-бот (этап 7 плана).
  */
 import { services, masters, timeSlots, site } from '../data/site';
+import { url } from '../utils/url';
 ---
 
 <section id="booking" class="booking" aria-labelledby="booking-title">
@@ -148,7 +149,7 @@ import { services, masters, timeSlots, site } from '../data/site';
             <label class="consent">
               <input class="consent__input" type="checkbox" name="consent" required aria-describedby="bk-consent-err" />
               <span>
-                Я согласна(-ен) на <a href="/privacy" target="_blank" rel="noopener">обработку персональных данных</a>
+                Я согласна(-ен) на <a href={url('privacy/')} target="_blank" rel="noopener">обработку персональных данных</a>
               </span>
             </label>
             <p class="field__error" id="bk-consent-err" data-error></p>

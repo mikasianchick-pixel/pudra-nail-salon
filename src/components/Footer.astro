@@ -1,5 +1,6 @@
 ---
 import { site, nav } from '../data/site';
+import { url } from '../utils/url';
 const year = new Date().getFullYear();
 ---
 
@@ -46,7 +47,7 @@ const year = new Date().getFullYear();
   <div class="container">
     <div class="footer__bottom">
       <p>© {year} «{site.name}». Учебный проект: данные вымышленные.</p>
-      <a href="/privacy">Политика обработки персональных данных</a>
+      <a href={url('privacy/')}>Политика обработки персональных данных</a>
     </div>
   </div>
 </footer>

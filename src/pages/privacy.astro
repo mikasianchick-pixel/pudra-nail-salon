@@ -1,11 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
 import { site } from '../data/site';
+import { url } from '../utils/url';
 ---
 
 <Base title={`Политика обработки персональных данных — ${site.name}`} description="Как студия «Пудра» обрабатывает и защищает персональные данные клиентов.">
   <main class="container legal">
-    <a class="link-arrow" href="/"><span aria-hidden="true">←</span> На главную</a>
+    <a class="link-arrow" href={url()}><span aria-hidden="true">←</span> На главную</a>
 
     <p class="legal__note">
       Шаблон для учебного проекта. Для реального салона текст нужно заполнить реквизитами и проверить у юриста
