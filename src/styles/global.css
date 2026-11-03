@@ -1,0 +1,316 @@
+/* =========================================================
+   Дизайн-токены «Пудра» (см. research/04-design.md)
+   ========================================================= */
+:root {
+  /* Цвета */
+  --c-bg: #fbf7f3;
+  --c-surface: #f4ece6;
+  --c-blush: #e8cfc5;
+  --c-line: #e3d6ce;
+  --c-text: #2a2220;
+  --c-muted: #6e5f59;
+  --c-accent: #7a2e3a;
+  --c-accent-hover: #5f222c;
+  --c-on-accent: #fff8f5;
+  --c-gold: #b08d57;
+  --c-error: #a3262a;
+
+  /* Шрифты */
+  --f-serif: 'Cormorant Garamond', 'Times New Roman', serif;
+  --f-sans: 'Manrope Variable', 'Segoe UI', system-ui, sans-serif;
+
+  /* Размеры текста: телефон → компьютер */
+  --fs-h1: clamp(2.75rem, 1.6rem + 5.2vw, 6rem);
+  --fs-h2: clamp(2.125rem, 1.5rem + 3vw, 3.75rem);
+  --fs-h3: clamp(1.375rem, 1.2rem + 0.6vw, 1.75rem);
+  --fs-body: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --fs-small: 0.875rem;
+  --fs-eyebrow: 0.75rem;
+
+  /* Отступы */
+  --gutter: clamp(1.25rem, 0.8rem + 2vw, 2.5rem);
+  --section: clamp(5rem, 3.5rem + 6vw, 8.75rem);
+  --container: 77.5rem;
+
+  /* Скругления */
+  --r-sm: 8px;
+  --r-md: 20px;
+  --r-pill: 999px;
+
+  --header-h: 72px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* =========================================================
+   Сброс и база
+   ========================================================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 16px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  min-height: 100vh;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: var(--f-sans);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+img,
+picture,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--fs-h1);
+}
+
+h2 {
+  font-size: var(--fs-h2);
+}
+
+h3 {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+em {
+  font-style: italic;
+}
+
+:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: var(--c-blush);
+  color: var(--c-text);
+}
+
+/* =========================================================
+   Общие классы
+   ========================================================= */
+.container {
+  width: 100%;
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: var(--section);
+}
+
+.section--surface {
+  background: var(--c-surface);
+}
+
+.section-head {
+  display: grid;
+  gap: 1rem;
+  max-width: 44rem;
+  margin-bottom: clamp(2.5rem, 2rem + 2vw, 4rem);
+}
+
+.section-head p {
+  color: var(--c-muted);
+}
+
+.eyebrow {
+  font-family: var(--f-sans);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100px;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+  border-radius: var(--r-pill);
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* ---------- Кнопки ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 52px;
+  padding: 0.75rem 1.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  font-family: var(--f-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 0.25s var(--ease),
+    color 0.25s var(--ease),
+    border-color 0.25s var(--ease),
+    transform 0.25s var(--ease);
+}
+
+.btn--primary {
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+}
+
+.btn--primary:hover {
+  background: var(--c-accent-hover);
+  transform: translateY(-2px);
+}
+
+.btn--ghost {
+  border-color: var(--c-text);
+  background: transparent;
+  color: var(--c-text);
+}
+
+.btn--ghost:hover {
+  background: var(--c-text);
+  color: var(--c-bg);
+}
+
+.btn--light {
+  background: var(--c-on-accent);
+  color: var(--c-accent);
+}
+
+.btn--light:hover {
+  background: #fff;
+  transform: translateY(-2px);
+}
+
+.btn--sm {
+  min-height: 44px;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.9375rem;
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  font-weight: 600;
+  color: var(--c-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  transition: gap 0.25s var(--ease);
+}
+
+.link-arrow:hover {
+  gap: 0.75rem;
+}
+
+/* =========================================================
+   Анимация появления при прокрутке.
+   Скрываем блоки только если работает JS (класс .js на <html>),
+   иначе контент всегда виден.
+   ========================================================= */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.7s var(--ease),
+      transform 0.7s var(--ease);
+    transition-delay: calc(var(--d, 0) * 90ms);
+  }
+
+  .js [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}

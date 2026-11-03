@@ -1,0 +1,183 @@
+---
+import { Picture } from 'astro:assets';
+import { site } from '../data/site';
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero__grid">
+    <div class="hero__content">
+      <p class="eyebrow hero__in" style="--i: 0">Студия маникюра · {site.city}, Пречистенка</p>
+      <h1 id="hero-title" class="hero__title hero__in" style="--i: 1">
+        Руки, на которые хочется <em>смотреть</em>
+      </h1>
+      <p class="hero__lead hero__in" style="--i: 2">
+        Аккуратный маникюр и стойкое покрытие до&nbsp;4&nbsp;недель. Стерильные инструменты, бережная работа и время только
+        для вас.
+      </p>
+      <div class="hero__actions hero__in" style="--i: 3">
+        <a class="btn btn--primary" href="#booking">Записаться</a>
+        <a class="link-arrow" href="#services">Смотреть цены <span aria-hidden="true">→</span></a>
+      </div>
+      <p class="hero__rating hero__in" style="--i: 4">
+        <span class="hero__stars" aria-hidden="true">★★★★★</span>
+        <span><strong>{site.rating}</strong> · {site.reviewsCount} отзывов на Яндекс Картах</span>
+      </p>
+    </div>
+
+    <div class="hero__media">
+      <Picture
+        src={site.heroImage}
+        alt="Рука с аккуратным нюдовым маникюром на мягком белом пледе"
+        formats={['avif', 'webp']}
+        widths={[360, 480, 560, 640, 720, 880, 1200]}
+        sizes="(min-width: 1024px) 40vw, (min-width: 640px) 70vw, 92vw"
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        class="hero__img"
+      />
+      <p class="hero__badge">
+        <span class="hero__badge-num">4</span>
+        <span>недели держится покрытие</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(1.5rem, 1rem + 3vw, 4rem) clamp(4rem, 3rem + 4vw, 7rem);
+  }
+
+  .hero__grid {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .hero__content {
+    display: grid;
+    gap: 1.5rem;
+    justify-items: start;
+  }
+
+  .hero__title em {
+    color: var(--c-accent);
+  }
+
+  .hero__lead {
+    max-width: 32rem;
+    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+    color: var(--c-muted);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.75rem;
+  }
+
+  .hero__rating {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.75rem;
+    font-size: var(--fs-small);
+    color: var(--c-muted);
+  }
+
+  .hero__rating strong {
+    color: var(--c-text);
+  }
+
+  .hero__stars {
+    letter-spacing: 0.1em;
+    color: var(--c-gold);
+  }
+
+  .hero__media {
+    position: relative;
+    width: min(100%, 30rem);
+    justify-self: center;
+  }
+
+  .hero__media :global(.hero__img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    /* Кадр ниже — в арку попадают ногти, а не размытый фон сверху */
+    object-position: center 78%;
+    /* Арка: большое скругление сверху */
+    border-radius: 999px 999px var(--r-md) var(--r-md);
+  }
+
+  .hero__media :global(picture) {
+    display: block;
+  }
+
+  .hero__badge {
+    position: absolute;
+    left: -0.75rem;
+    bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 13rem;
+    padding: 0.875rem 1.25rem;
+    border-radius: var(--r-md);
+    background: var(--c-bg);
+    box-shadow: 0 12px 40px rgb(42 34 32 / 0.12);
+    font-size: var(--fs-small);
+    line-height: 1.3;
+  }
+
+  .hero__badge-num {
+    font-family: var(--f-serif);
+    font-size: 2.75rem;
+    line-height: 1;
+    color: var(--c-accent);
+  }
+
+  @media (min-width: 1024px) {
+    .hero__grid {
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 4rem;
+    }
+
+    .hero__media {
+      width: 100%;
+    }
+
+    .hero__badge {
+      left: -2.5rem;
+      bottom: 3rem;
+    }
+  }
+
+  /* Каскадное появление при загрузке (без JS) */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__in {
+      animation: hero-in 0.9s var(--ease) both;
+      animation-delay: calc(var(--i, 0) * 110ms + 100ms);
+    }
+
+    @keyframes hero-in {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+    }
+
+    /* Фото — без прозрачности (иначе ухудшается метрика скорости LCP), только мягкое «приближение» */
+    .hero__media :global(.hero__img) {
+      animation: hero-zoom 1.4s var(--ease) both;
+    }
+
+    @keyframes hero-zoom {
+      from {
+        transform: scale(1.04);
+      }
+    }
+  }
+</style>

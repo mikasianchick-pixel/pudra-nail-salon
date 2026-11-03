@@ -1,0 +1,146 @@
+---
+import { site, nav } from '../data/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <p class="footer__logo">{site.name}</p>
+      <p class="footer__muted">Студия маникюра и педикюра в центре Москвы. Красиво, стерильно, без спешки.</p>
+    </div>
+
+    <nav aria-label="Меню в подвале">
+      <p class="footer__title">Разделы</p>
+      <ul class="footer__list">
+        {
+          nav.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+        <li><a href="#booking">Запись</a></li>
+      </ul>
+    </nav>
+
+    <div>
+      <p class="footer__title">Контакты</p>
+      <ul class="footer__list">
+        <li><a href={site.phoneHref}>{site.phone}</a></li>
+        <li>{site.city}, {site.address}</li>
+        <li>{site.hours}</li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="footer__title">Мы в сети</p>
+      <ul class="footer__list">
+        <li><a href={`https://t.me/${site.telegram}`} target="_blank" rel="noopener noreferrer">Telegram</a></li>
+        <li><a href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+        <li><a href={site.vk} target="_blank" rel="noopener noreferrer">ВКонтакте</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="footer__bottom">
+      <p>© {year} «{site.name}». Учебный проект: данные вымышленные.</p>
+      <a href="/privacy">Политика обработки персональных данных</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding-block: 4.5rem 2rem;
+    background: var(--c-text);
+    color: var(--c-bg);
+  }
+
+  .footer a {
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .footer a:hover {
+    opacity: 0.7;
+  }
+
+  .footer :focus-visible {
+    outline-color: var(--c-bg);
+  }
+
+  .footer__grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .footer__logo {
+    margin-bottom: 0.75rem;
+    font-family: var(--f-serif);
+    font-size: 2.5rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .footer__muted,
+  .footer__bottom {
+    color: rgb(251 247 243 / 0.7);
+  }
+
+  .footer__muted {
+    max-width: 20rem;
+  }
+
+  .footer__title {
+    margin-bottom: 1rem;
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(251 247 243 / 0.7);
+  }
+
+  .footer__list {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .footer__list a {
+    display: inline-block;
+    padding-block: 0.25rem;
+  }
+
+  .footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgb(251 247 243 / 0.15);
+    font-size: var(--fs-small);
+  }
+
+  @media (min-width: 640px) {
+    .footer__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer__grid {
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    }
+  }
+
+  /* На телефоне снизу липкая кнопка — оставляем под неё место */
+  @media (max-width: 960px) {
+    .footer {
+      padding-bottom: 6.5rem;
+    }
+  }
+</style>

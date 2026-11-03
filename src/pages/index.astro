@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Features from '../components/Features.astro';
+import Services from '../components/Services.astro';
+import Gallery from '../components/Gallery.astro';
+import Masters from '../components/Masters.astro';
+import Reviews from '../components/Reviews.astro';
+import Hygiene from '../components/Hygiene.astro';
+import Offers from '../components/Offers.astro';
+import Faq from '../components/Faq.astro';
+import Booking from '../components/Booking.astro';
+import Contacts from '../components/Contacts.astro';
+import Footer from '../components/Footer.astro';
+import StickyCta from '../components/StickyCta.astro';
+---
+
+<Base>
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+  <div id="top"></div>
+  <Header />
+  <main id="main">
+    <Hero />
+    <Features />
+    <Services />
+    <Gallery />
+    <Masters />
+    <Reviews />
+    <Hygiene />
+    <Offers />
+    <Faq />
+    <Booking />
+    <Contacts />
+  </main>
+  <Footer />
+  <StickyCta />
+</Base>

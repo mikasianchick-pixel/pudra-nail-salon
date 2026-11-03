@@ -1,0 +1,79 @@
+---
+---
+
+<section class="section" aria-labelledby="offers-title">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <p class="eyebrow">Подарки и акции</p>
+      <h2 id="offers-title">Приятное <em>вдвойне</em></h2>
+    </div>
+
+    <ul class="offers">
+      <li class="offer offer--gift" data-reveal>
+        <p class="eyebrow">Подарочный сертификат</p>
+        <h3>Лучший подарок&nbsp;— время для себя</h3>
+        <p>Номинал от 2 000 ₽ или конкретная услуга. Красивый конверт или электронная версия за 5 минут.</p>
+        <a class="btn btn--light" href="#booking" data-book-comment="Хочу купить подарочный сертификат">
+          Заказать сертификат
+        </a>
+      </li>
+      <li class="offer" data-reveal style="--d: 1">
+        <p class="eyebrow">Первый визит</p>
+        <p class="offer__big">−15%</p>
+        <p>На любую услугу при первом посещении. Назовите администратору промокод <strong>ПУДРА15</strong>.</p>
+        <a class="btn btn--primary" href="#booking" data-book-comment="Промокод ПУДРА15 (первый визит)">
+          Записаться со скидкой
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .offers {
+    display: grid;
+    gap: 1rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .offer {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: 1rem;
+    padding: clamp(1.75rem, 1.4rem + 2vw, 3rem);
+    border-radius: var(--r-md);
+    background: var(--c-blush);
+  }
+
+  .offer p:not(.eyebrow, .offer__big) {
+    max-width: 30rem;
+  }
+
+  .offer .btn {
+    margin-top: 0.5rem;
+  }
+
+  .offer--gift {
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+  }
+
+  .offer--gift .eyebrow {
+    color: rgb(255 248 245 / 0.75);
+  }
+
+  .offer__big {
+    font-family: var(--f-serif);
+    font-size: clamp(4rem, 3rem + 4vw, 6.5rem);
+    line-height: 0.9;
+    color: var(--c-accent);
+  }
+
+  @media (min-width: 768px) {
+    .offers {
+      grid-template-columns: 1.2fr 0.8fr;
+    }
+  }
+</style>

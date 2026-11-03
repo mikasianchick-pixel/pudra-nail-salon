@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.astro/
+
+# Не относятся к сайту салона — остаются только на компьютере
+index-old.html
+instruction.txt

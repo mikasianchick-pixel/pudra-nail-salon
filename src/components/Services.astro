@@ -1,0 +1,249 @@
+---
+import { services } from '../data/site';
+---
+
+<section id="services" class="section section--surface" aria-labelledby="services-title">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <p class="eyebrow">Услуги и цены</p>
+      <h2 id="services-title">Прайс без <em>сюрпризов</em></h2>
+      <p>Цена указана за весь объём работы. Снятие старого покрытия&nbsp;— бесплатно при записи на новое.</p>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Категории услуг" data-tabs data-reveal>
+      {
+        services.map((cat, i) => (
+          <button
+            class="tab"
+            type="button"
+            role="tab"
+            id={`tab-${cat.id}`}
+            aria-controls={`panel-${cat.id}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+          >
+            {cat.title}
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="panels" data-reveal>
+      {
+        services.map((cat) => (
+          <div class="panel" id={`panel-${cat.id}`} role="tabpanel" aria-labelledby={`tab-${cat.id}`} data-panel>
+            <h3 class="panel__title">{cat.title}</h3>
+            <ul class="price-list">
+              {cat.items.map((s) => (
+                <li class="price">
+                  <div class="price__main">
+                    <p class="price__name">{s.name}</p>
+                    <span class="price__dots" aria-hidden="true" />
+                    <p class="price__value">{s.price}</p>
+                  </div>
+                  <div class="price__meta">
+                    <p class="price__desc">
+                      {s.desc} · <span class="price__time">{s.duration}</span>
+                    </p>
+                    <a
+                      class="price__book"
+                      href="#booking"
+                      data-book-service={s.id}
+                      aria-label={`Записаться: ${s.name}`}
+                    >
+                      Записаться
+                    </a>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 0.25rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Без JS вкладки не нужны — показываем все категории списком */
+  :global(html:not(.js)) .tabs {
+    display: none;
+  }
+
+  .tab {
+    flex: none;
+    min-height: 44px;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-pill);
+    background: var(--c-bg);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    transition:
+      background-color 0.25s ease,
+      color 0.25s ease,
+      border-color 0.25s ease;
+  }
+
+  .tab:hover {
+    border-color: var(--c-accent);
+  }
+
+  .tab[aria-selected='true'] {
+    border-color: var(--c-accent);
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+  }
+
+  .panels {
+    display: grid;
+    gap: 3rem;
+  }
+
+  .panel[hidden] {
+    display: none;
+  }
+
+  /* С JS заголовок категории дублирует вкладку — прячем визуально, оставляем для скринридеров */
+  :global(html.js) .panel__title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .panel__title {
+    margin-bottom: 1rem;
+  }
+
+  .price-list {
+    display: grid;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--c-line);
+  }
+
+  .price {
+    display: grid;
+    gap: 0.375rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .price__main {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  .price__name {
+    font-family: var(--f-serif);
+    font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .price__dots {
+    flex: 1;
+    min-width: 1rem;
+    border-bottom: 1px dotted var(--c-muted);
+    transform: translateY(-0.3em);
+    opacity: 0.5;
+  }
+
+  .price__value {
+    flex: none;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .price__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+  }
+
+  .price__desc {
+    font-size: var(--fs-small);
+    color: var(--c-muted);
+  }
+
+  .price__time {
+    white-space: nowrap;
+  }
+
+  .price__book {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--c-accent);
+    text-underline-offset: 0.3em;
+  }
+
+  @media (min-width: 768px) {
+    .price {
+      padding: 1.5rem 0;
+    }
+  }
+</style>
+
+<script>
+  const tablist = document.querySelector<HTMLElement>('[data-tabs]');
+  if (tablist) {
+    const tabs = Array.from(tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-panel]'));
+
+    const select = (index: number, focus = false) => {
+      tabs.forEach((tab, i) => {
+        const active = i === index;
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+        const panel = panels[i];
+        if (panel) panel.hidden = !active;
+      });
+      const current = tabs[index];
+      if (current) {
+        if (focus) current.focus();
+        current.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      }
+    };
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(i));
+      // Стрелки влево/вправо, Home/End — как положено для вкладок
+      tab.addEventListener('keydown', (e) => {
+        let next = -1;
+        if (e.key === 'ArrowRight') next = (i + 1) % tabs.length;
+        else if (e.key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = tabs.length - 1;
+        if (next >= 0) {
+          e.preventDefault();
+          select(next, true);
+        }
+      });
+    });
+
+    // Начальное состояние: открыта первая категория (без прокрутки страницы)
+    panels.forEach((panel, i) => (panel.hidden = i !== 0));
+  }
+</script>

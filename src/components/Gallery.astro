@@ -1,0 +1,383 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import { gallery, galleryFilters } from '../data/site';
+
+// Для полноэкранного просмотра заранее готовим большую WebP-версию каждого фото
+const items = await Promise.all(
+  gallery.map(async (item) => {
+    const full = await getImage({ src: item.src, width: 1400, format: 'webp' });
+    return { ...item, full: full.src };
+  }),
+);
+---
+
+<section id="works" class="section" aria-labelledby="works-title">
+  <div class="container">
+    <div class="works__head" data-reveal>
+      <div class="section-head">
+        <p class="eyebrow">Наши работы</p>
+        <h2 id="works-title">Каждый маникюр&nbsp;— <em>маленькое</em> произведение</h2>
+      </div>
+
+      <div class="filters" role="group" aria-label="Фильтр по стилю" data-filters>
+        {
+          galleryFilters.map((f, i) => (
+            <button class="filter" type="button" data-filter={f.id} aria-pressed={i === 0 ? 'true' : 'false'}>
+              {f.label}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <ul class="grid" data-gallery>
+      {
+        items.map((item, i) => (
+          <li class:list={['cell', item.size && `cell--${item.size}`]} data-tag={item.tag} data-reveal style={`--d: ${i % 4}`}>
+            <a class="cell__link" href={item.full} data-index={i} aria-label={`Открыть фото: ${item.alt}`}>
+              <Picture
+                src={item.src}
+                alt={item.alt}
+                formats={['avif', 'webp']}
+                widths={[320, 480, 720]}
+                sizes="(min-width: 1024px) 25vw, 50vw"
+                class="cell__img"
+              />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <dialog class="lightbox" aria-label="Просмотр работ" data-lightbox>
+    <figure class="lightbox__figure">
+      <img class="lightbox__img" src="" alt="" data-lightbox-img />
+      <figcaption class="lightbox__caption" data-lightbox-caption></figcaption>
+    </figure>
+    <button class="lb-btn lightbox__close" type="button" aria-label="Закрыть" data-lightbox-close>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+    </button>
+    <button class="lb-btn lightbox__prev" type="button" aria-label="Предыдущее фото" data-lightbox-prev>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m15 5-7 7 7 7"></path></svg>
+    </button>
+    <button class="lb-btn lightbox__next" type="button" aria-label="Следующее фото" data-lightbox-next>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m9 5 7 7-7 7"></path></svg>
+    </button>
+  </dialog>
+</section>
+
+<style>
+  .works__head {
+    display: grid;
+    gap: 0 2rem;
+    align-items: end;
+  }
+
+  .filters {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  :global(html:not(.js)) .filters {
+    display: none;
+  }
+
+  .filter {
+    flex: none;
+    min-height: 44px;
+    padding: 0.5rem 1.125rem;
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-pill);
+    background: transparent;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    transition:
+      background-color 0.25s ease,
+      color 0.25s ease,
+      border-color 0.25s ease;
+  }
+
+  .filter:hover {
+    border-color: var(--c-text);
+  }
+
+  .filter[aria-pressed='true'] {
+    border-color: var(--c-text);
+    background: var(--c-text);
+    color: var(--c-bg);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: clamp(10rem, 30vw, 17rem);
+    grid-auto-flow: dense;
+    gap: 0.75rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cell[hidden] {
+    display: none;
+  }
+
+  .cell--tall {
+    grid-row: span 2;
+  }
+
+  .cell--wide {
+    grid-column: span 2;
+  }
+
+  .cell__link {
+    display: block;
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+  }
+
+  .cell__link :global(picture) {
+    display: block;
+    height: 100%;
+  }
+
+  .cell__link :global(.cell__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s var(--ease);
+  }
+
+  .cell__link:hover :global(.cell__img) {
+    transform: scale(1.04);
+  }
+
+  @media (min-width: 1024px) {
+    .works__head {
+      grid-template-columns: 1fr auto;
+    }
+
+    .filters {
+      margin-bottom: clamp(2.5rem, 2rem + 2vw, 4rem);
+    }
+
+    .grid {
+      grid-template-columns: repeat(4, 1fr);
+      grid-auto-rows: 16rem;
+      gap: 1rem;
+    }
+  }
+
+  /* ---------- Полноэкранный просмотр ---------- */
+  .lightbox {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    overscroll-behavior: contain;
+  }
+
+  .lightbox[open] {
+    display: grid;
+    place-items: center;
+  }
+
+  .lightbox::backdrop {
+    background: rgb(20 15 14 / 0.94);
+  }
+
+  .lightbox__figure {
+    display: grid;
+    justify-items: center;
+    gap: 1rem;
+    padding: 4.5rem 1rem 2rem;
+    touch-action: pan-y;
+  }
+
+  .lightbox__img {
+    max-width: min(100%, 60rem);
+    max-height: calc(100dvh - 9rem);
+    width: auto;
+    border-radius: var(--r-sm);
+    object-fit: contain;
+    user-select: none;
+  }
+
+  .lightbox__caption {
+    max-width: 40rem;
+    font-size: var(--fs-small);
+    text-align: center;
+    color: rgb(255 255 255 / 0.85);
+  }
+
+  .lb-btn {
+    position: fixed;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgb(255 255 255 / 0.3);
+    border-radius: 50%;
+    background: rgb(0 0 0 / 0.35);
+    color: #fff;
+    transition: background-color 0.2s ease;
+  }
+
+  .lb-btn:hover {
+    background: rgb(255 255 255 / 0.15);
+  }
+
+  .lb-btn:focus-visible {
+    outline-color: #fff;
+  }
+
+  .lightbox__close {
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .lightbox__prev,
+  .lightbox__next {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .lightbox__prev {
+    left: 1rem;
+  }
+
+  .lightbox__next {
+    right: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .lightbox__prev,
+    .lightbox__next {
+      top: auto;
+      bottom: 1rem;
+      transform: none;
+    }
+
+    .lightbox__figure {
+      padding-bottom: 5rem;
+    }
+
+    .lightbox__img {
+      max-height: calc(100dvh - 12rem);
+    }
+  }
+</style>
+
+<script>
+  const grid = document.querySelector<HTMLElement>('[data-gallery]');
+  const filtersWrap = document.querySelector<HTMLElement>('[data-filters]');
+  const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+  const img = document.querySelector<HTMLImageElement>('[data-lightbox-img]');
+  const caption = document.querySelector<HTMLElement>('[data-lightbox-caption]');
+
+  if (grid && filtersWrap && dialog && img && caption) {
+    const cells = Array.from(grid.querySelectorAll<HTMLLIElement>('li[data-tag]'));
+    const links = cells.map((c) => c.querySelector<HTMLAnchorElement>('a[data-index]'));
+    let current = 0;
+    let lastFocus: HTMLElement | null = null;
+
+    /* --- Фильтр --- */
+    const filterButtons = Array.from(filtersWrap.querySelectorAll<HTMLButtonElement>('[data-filter]'));
+    filterButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const tag = btn.dataset.filter;
+        filterButtons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+        cells.forEach((cell) => {
+          cell.hidden = tag !== 'all' && cell.dataset.tag !== tag;
+          cell.classList.add('is-visible'); // не прячем анимацией уже отфильтрованные фото
+        });
+      });
+    });
+
+    /* --- Просмотр --- */
+    const visibleIndexes = () => cells.map((c, i) => (c.hidden ? -1 : i)).filter((i) => i >= 0);
+
+    const show = (index: number) => {
+      const link = links[index];
+      const picImg = link?.querySelector('img');
+      if (!link || !picImg) return;
+      current = index;
+      img.src = link.href;
+      img.alt = picImg.alt;
+      caption.textContent = picImg.alt;
+    };
+
+    const step = (dir: 1 | -1) => {
+      const list = visibleIndexes();
+      if (list.length === 0) return;
+      const pos = list.indexOf(current);
+      const next = list[(pos + dir + list.length) % list.length];
+      if (next !== undefined) show(next);
+    };
+
+    links.forEach((link, i) => {
+      link?.addEventListener('click', (e) => {
+        if (typeof dialog.showModal !== 'function') return; // старый браузер — просто откроется фото
+        e.preventDefault();
+        lastFocus = link;
+        show(i);
+        dialog.showModal();
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    dialog.addEventListener('close', () => {
+      document.body.style.overflow = '';
+      lastFocus?.focus();
+    });
+
+    dialog.querySelector('[data-lightbox-close]')?.addEventListener('click', () => dialog.close());
+    dialog.querySelector('[data-lightbox-prev]')?.addEventListener('click', () => step(-1));
+    dialog.querySelector('[data-lightbox-next]')?.addEventListener('click', () => step(1));
+
+    // Клик по тёмному фону закрывает просмотр
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') step(1);
+      if (e.key === 'ArrowLeft') step(-1);
+    });
+
+    // Свайп на телефоне
+    let startX = 0;
+    let startY = 0;
+    dialog.addEventListener(
+      'touchstart',
+      (e) => {
+        const t = e.changedTouches[0];
+        if (!t) return;
+        startX = t.clientX;
+        startY = t.clientY;
+      },
+      { passive: true },
+    );
+    dialog.addEventListener('touchend', (e) => {
+      const t = e.changedTouches[0];
+      if (!t) return;
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1);
+    });
+  }
+</script>

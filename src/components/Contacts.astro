@@ -1,0 +1,164 @@
+---
+import { site } from '../data/site';
+---
+
+<section id="contacts" class="section" aria-labelledby="contacts-title">
+  <div class="container contacts">
+    <div class="contacts__info" data-reveal>
+      <div class="section-head">
+        <p class="eyebrow">Контакты</p>
+        <h2 id="contacts-title">Ждём вас <em>в гости</em></h2>
+      </div>
+
+      <dl class="info">
+        <div class="info__row">
+          <dt>Адрес</dt>
+          <dd>
+            {site.city}, {site.address}<br /><span class="info__muted">{site.metro}</span>
+          </dd>
+        </div>
+        <div class="info__row">
+          <dt>Как найти</dt>
+          <dd>Вход со двора, белая дверь с вывеской «Пудра». Второй этаж.</dd>
+        </div>
+        <div class="info__row">
+          <dt>График</dt>
+          <dd>{site.hours}</dd>
+        </div>
+        <div class="info__row">
+          <dt>Телефон</dt>
+          <dd><a class="info__phone" href={site.phoneHref}>{site.phone}</a></dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Лёгкая «карта»-заглушка вместо тяжёлого виджета: открывает Яндекс Карты -->
+    <a class="map" href={site.mapUrl} target="_blank" rel="noopener noreferrer" data-reveal style="--d: 1">
+      <span class="map__pin" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"></path></svg>
+      </span>
+      <span class="map__label">
+        <strong>{site.name}</strong>
+        <span>{site.address}</span>
+      </span>
+      <span class="map__cta">Открыть в Яндекс Картах ↗</span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .contacts {
+    display: grid;
+    gap: 2.5rem;
+    align-items: stretch;
+  }
+
+  .info {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--c-line);
+  }
+
+  .info__row {
+    display: grid;
+    gap: 0.25rem;
+    padding: 1.125rem 0;
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .info dt {
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+  }
+
+  .info dd {
+    margin: 0;
+  }
+
+  .info__muted {
+    color: var(--c-muted);
+  }
+
+  .info__phone {
+    font-family: var(--f-serif);
+    font-size: 1.75rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .map {
+    position: relative;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 1rem;
+    min-height: 22rem;
+    overflow: hidden;
+    border-radius: var(--r-md);
+    text-decoration: none;
+    /* Стилизованная «карта» из CSS — ноль килобайт картинок */
+    background:
+      linear-gradient(115deg, transparent 47%, rgb(255 255 255 / 0.9) 47%, rgb(255 255 255 / 0.9) 50%, transparent 50%),
+      linear-gradient(25deg, transparent 60%, rgb(255 255 255 / 0.75) 60%, rgb(255 255 255 / 0.75) 62%, transparent 62%),
+      linear-gradient(160deg, transparent 30%, rgb(255 255 255 / 0.6) 30%, rgb(255 255 255 / 0.6) 31.5%, transparent 31.5%),
+      repeating-linear-gradient(0deg, transparent 0 46px, rgb(232 207 197 / 0.6) 46px 48px),
+      repeating-linear-gradient(90deg, transparent 0 46px, rgb(232 207 197 / 0.6) 46px 48px),
+      var(--c-surface);
+  }
+
+  .map__pin {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+    box-shadow: 0 0 0 12px rgb(122 46 58 / 0.15);
+    transition: transform 0.4s var(--ease);
+  }
+
+  .map:hover .map__pin {
+    transform: translateY(-4px);
+  }
+
+  .map__label {
+    display: grid;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--r-sm);
+    background: var(--c-bg);
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .map__label strong {
+    font-family: var(--f-serif);
+    font-size: 1.25rem;
+  }
+
+  .map__cta {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--r-pill);
+    background: var(--c-text);
+    color: var(--c-bg);
+    font-size: var(--fs-small);
+    font-weight: 600;
+  }
+
+  @media (min-width: 1024px) {
+    .contacts {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 5rem;
+    }
+
+    .map {
+      min-height: 100%;
+    }
+  }
+</style>

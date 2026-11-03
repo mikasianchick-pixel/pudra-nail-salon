@@ -1,0 +1,809 @@
+---
+/**
+ * Форма записи в 3 шага.
+ * ДЕМО-РЕЖИМ: заявка никуда не отправляется (у сайта нет сервера).
+ * Для настоящего салона: подключить виджет YCLIENTS/DIKIDI или отправку заявки в Telegram-бот (этап 7 плана).
+ */
+import { services, masters, timeSlots, site } from '../data/site';
+---
+
+<section id="booking" class="booking" aria-labelledby="booking-title">
+  <div class="container booking__grid">
+    <div class="booking__intro" data-reveal>
+      <p class="eyebrow booking__eyebrow">Онлайн-запись</p>
+      <h2 id="booking-title">Запишитесь <em>за минуту</em></h2>
+      <p class="booking__lead">Выберите услугу и удобное время&nbsp;— администратор подтвердит запись в течение 15 минут.</p>
+
+      <div class="booking__alt">
+        <p>Удобнее в мессенджере?</p>
+        <div class="booking__alt-links">
+          <a class="chip" href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          <a class="chip" href={`https://t.me/${site.telegram}`} target="_blank" rel="noopener noreferrer">Telegram</a>
+          <a class="chip" href={site.phoneHref}>Позвонить</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-reveal style="--d: 1">
+      <form class="form" novalidate data-booking-form data-whatsapp={site.whatsapp}>
+        <div class="progress" aria-hidden="true">
+          <span class="progress__bar" data-progress></span>
+        </div>
+        <p class="form__step-label" aria-live="polite">Шаг <span data-step-num>1</span> из 3</p>
+
+        <!-- Шаг 1: услуга и мастер -->
+        <fieldset class="step" data-step="1">
+          <legend class="step__title">Что делаем?</legend>
+
+          <div class="field">
+            <label class="field__label" for="bk-service">Услуга</label>
+            <select class="field__control" id="bk-service" name="service" required aria-describedby="bk-service-err">
+              <option value="">Выберите услугу</option>
+              {
+                services.map((cat) => (
+                  <optgroup label={cat.title}>
+                    {cat.items.map((s) => (
+                      <option value={s.id}>
+                        {s.name} — {s.price}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))
+              }
+            </select>
+            <p class="field__error" id="bk-service-err" data-error></p>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="bk-master">Мастер</label>
+            <select class="field__control" id="bk-master" name="master">
+              <option value="">Любой свободный мастер</option>
+              {masters.map((m) => <option value={m.id}>{m.name}</option>)}
+            </select>
+          </div>
+
+          <div class="form__nav">
+            <button class="btn btn--primary" type="button" data-next>Далее</button>
+          </div>
+        </fieldset>
+
+        <!-- Шаг 2: дата и время -->
+        <fieldset class="step" data-step="2">
+          <legend class="step__title">Когда удобно?</legend>
+
+          <div class="field">
+            <p class="field__label" id="bk-date-label">Дата</p>
+            <div class="days" role="radiogroup" aria-labelledby="bk-date-label" aria-describedby="bk-date-err" data-days>
+              <noscript>
+                <input class="field__control" type="date" name="date" aria-label="Дата" />
+              </noscript>
+            </div>
+            <p class="field__error" id="bk-date-err" data-error></p>
+          </div>
+
+          <div class="field">
+            <p class="field__label" id="bk-time-label">Время</p>
+            <div class="slots" role="radiogroup" aria-labelledby="bk-time-label" aria-describedby="bk-time-err">
+              {
+                timeSlots.map((t) => (
+                  <label class="pick">
+                    <input class="pick__input" type="radio" name="time" value={t} />
+                    <span class="pick__box">{t}</span>
+                  </label>
+                ))
+              }
+            </div>
+            <p class="field__error" id="bk-time-err" data-error></p>
+          </div>
+
+          <div class="form__nav">
+            <button class="btn btn--ghost" type="button" data-prev>Назад</button>
+            <button class="btn btn--primary" type="button" data-next>Далее</button>
+          </div>
+        </fieldset>
+
+        <!-- Шаг 3: контакты -->
+        <fieldset class="step" data-step="3">
+          <legend class="step__title">Как с вами связаться?</legend>
+
+          <div class="field">
+            <label class="field__label" for="bk-name">Имя</label>
+            <input
+              class="field__control"
+              id="bk-name"
+              name="name"
+              type="text"
+              autocomplete="given-name"
+              maxlength="40"
+              required
+              aria-describedby="bk-name-err"
+            />
+            <p class="field__error" id="bk-name-err" data-error></p>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="bk-phone">Телефон</label>
+            <input
+              class="field__control"
+              id="bk-phone"
+              name="phone"
+              type="tel"
+              inputmode="tel"
+              autocomplete="tel"
+              placeholder="+7 (___) ___-__-__"
+              maxlength="18"
+              required
+              aria-describedby="bk-phone-err"
+            />
+            <p class="field__error" id="bk-phone-err" data-error></p>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="bk-comment">Комментарий <span class="field__opt">(необязательно)</span></label>
+            <textarea class="field__control field__control--area" id="bk-comment" name="comment" rows="2" maxlength="300"
+            ></textarea>
+          </div>
+
+          <div class="field">
+            <label class="consent">
+              <input class="consent__input" type="checkbox" name="consent" required aria-describedby="bk-consent-err" />
+              <span>
+                Я согласна(-ен) на <a href="/privacy" target="_blank" rel="noopener">обработку персональных данных</a>
+              </span>
+            </label>
+            <p class="field__error" id="bk-consent-err" data-error></p>
+          </div>
+
+          <div class="form__nav">
+            <button class="btn btn--ghost" type="button" data-prev>Назад</button>
+            <button class="btn btn--primary" type="submit">Записаться</button>
+          </div>
+        </fieldset>
+      </form>
+
+      <!-- Экран успеха -->
+      <div class="success" hidden tabindex="-1" data-booking-success>
+        <p class="success__icon" aria-hidden="true">✓</p>
+        <h3 data-success-title>Спасибо!</h3>
+        <p class="success__summary" data-success-summary></p>
+        <p class="success__note">Мы перезвоним в течение 15 минут, чтобы подтвердить запись.</p>
+        <p class="success__demo">Демо-версия сайта: заявка не отправляется. Продублируйте её в мессенджер:</p>
+        <div class="success__links">
+          <a class="btn btn--primary" href="#" target="_blank" rel="noopener noreferrer" data-wa-link>Отправить в WhatsApp</a>
+          <a class="btn btn--ghost" href={`https://t.me/${site.telegram}`} target="_blank" rel="noopener noreferrer">Telegram</a>
+        </div>
+        <button class="success__again" type="button" data-again>Записаться ещё раз</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .booking {
+    padding-block: var(--section);
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+  }
+
+  .booking__grid {
+    display: grid;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .booking__intro {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .booking__eyebrow {
+    color: rgb(255 248 245 / 0.75);
+  }
+
+  .booking__lead {
+    max-width: 28rem;
+    color: rgb(255 248 245 / 0.85);
+  }
+
+  .booking__alt {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .booking__alt-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.5rem 1.125rem;
+    border: 1px solid rgb(255 248 245 / 0.45);
+    border-radius: var(--r-pill);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.25s ease;
+  }
+
+  .chip:hover {
+    background: rgb(255 248 245 / 0.12);
+  }
+
+  .booking :focus-visible {
+    outline-color: var(--c-on-accent);
+  }
+
+  /* ---------- Карточка с формой ---------- */
+  .card {
+    padding: clamp(1.5rem, 1rem + 2vw, 2.75rem);
+    border-radius: var(--r-md);
+    background: var(--c-bg);
+    color: var(--c-text);
+    box-shadow: 0 30px 60px rgb(0 0 0 / 0.18);
+  }
+
+  .card :focus-visible {
+    outline-color: var(--c-accent);
+  }
+
+  .progress {
+    height: 3px;
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+    border-radius: 3px;
+    background: var(--c-line);
+  }
+
+  .progress__bar {
+    display: block;
+    width: 33.33%;
+    height: 100%;
+    background: var(--c-accent);
+    transition: width 0.4s var(--ease);
+  }
+
+  :global(html:not(.js)) .progress,
+  :global(html:not(.js)) .form__step-label,
+  :global(html:not(.js)) [data-next],
+  :global(html:not(.js)) [data-prev] {
+    display: none;
+  }
+
+  .form__step-label {
+    margin-bottom: 1.25rem;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--c-muted);
+  }
+
+  .step {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .step[hidden] {
+    display: none;
+  }
+
+  .step__title {
+    margin-bottom: 0.25rem;
+    padding: 0;
+    font-family: var(--f-serif);
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .field {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .field__label {
+    font-size: var(--fs-small);
+    font-weight: 600;
+  }
+
+  .field__opt {
+    font-weight: 400;
+    color: var(--c-muted);
+  }
+
+  .field__control {
+    width: 100%;
+    min-height: 52px;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-sm);
+    background: #fff;
+    /* 16px — чтобы iPhone не увеличивал страницу при фокусе */
+    font-size: 1rem;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  select.field__control {
+    appearance: none;
+    padding-right: 2.75rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%232a2220' stroke-width='1.5'%3E%3Cpath d='m1 1.5 5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+  }
+
+  .field__control--area {
+    min-height: 80px;
+    resize: vertical;
+  }
+
+  .field__control:focus {
+    outline: none;
+    border-color: var(--c-accent);
+    box-shadow: 0 0 0 3px rgb(122 46 58 / 0.15);
+  }
+
+  .field__control[aria-invalid='true'] {
+    border-color: var(--c-error);
+  }
+
+  .field__error {
+    font-size: var(--fs-small);
+    color: var(--c-error);
+  }
+
+  .field__error:empty {
+    display: none;
+  }
+
+  /* Даты и время — «таблетки»-радиокнопки. :global — даты создаются скриптом */
+  .days,
+  .slots {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .days {
+    margin-inline: -0.25rem;
+    padding: 0.25rem 2rem 0.25rem 0.25rem;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    /* Затухание справа — подсказка, что даты можно листать */
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 3rem), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 3rem), transparent);
+  }
+
+  .slots {
+    flex-wrap: wrap;
+  }
+
+  .card :global(.pick) {
+    position: relative;
+    flex: none;
+  }
+
+  .card :global(.pick__input) {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .card :global(.pick__box) {
+    display: grid;
+    place-items: center;
+    min-width: 72px;
+    min-height: 48px;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-sm);
+    background: #fff;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .card :global(.pick__box small) {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--c-muted);
+  }
+
+  .card :global(.pick__input:hover + .pick__box) {
+    border-color: var(--c-accent);
+  }
+
+  .card :global(.pick__input:checked + .pick__box) {
+    border-color: var(--c-accent);
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+  }
+
+  .card :global(.pick__input:checked + .pick__box small) {
+    color: rgb(255 248 245 / 0.8);
+  }
+
+  .card :global(.pick__input:focus-visible + .pick__box) {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 2px;
+  }
+
+  .card :global(.pick__input:disabled) {
+    cursor: not-allowed;
+  }
+
+  .card :global(.pick__input:disabled + .pick__box) {
+    opacity: 0.35;
+    text-decoration: line-through;
+  }
+
+  .consent {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.75rem;
+    align-items: start;
+    font-size: var(--fs-small);
+    cursor: pointer;
+  }
+
+  .consent__input {
+    width: 22px;
+    height: 22px;
+    margin-top: 1px;
+    accent-color: var(--c-accent);
+  }
+
+  .consent a {
+    color: var(--c-accent);
+  }
+
+  .form__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .form__nav .btn--primary {
+    flex: 1;
+  }
+
+  /* ---------- Успех ---------- */
+  .success {
+    display: grid;
+    justify-items: start;
+    gap: 1rem;
+  }
+
+  .success[hidden] {
+    display: none;
+  }
+
+  .success:focus {
+    outline: none;
+  }
+
+  .success__icon {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+    font-size: 1.5rem;
+  }
+
+  .success__summary {
+    padding: 1rem 1.25rem;
+    border-radius: var(--r-sm);
+    background: var(--c-surface);
+    white-space: pre-line;
+  }
+
+  .success__note,
+  .success__demo {
+    color: var(--c-muted);
+  }
+
+  .success__demo {
+    font-size: var(--fs-small);
+  }
+
+  .success__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .success__again {
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-weight: 600;
+    color: var(--c-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
+
+  @media (min-width: 1024px) {
+    .booking__grid {
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 5rem;
+    }
+
+    .booking__intro {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-booking-form]');
+  const success = document.querySelector<HTMLElement>('[data-booking-success]');
+  const daysWrap = document.querySelector<HTMLElement>('[data-days]');
+
+  if (form && success && daysWrap) {
+    const steps = Array.from(form.querySelectorAll<HTMLFieldSetElement>('[data-step]'));
+    const stepNum = form.querySelector<HTMLElement>('[data-step-num]');
+    const progress = form.querySelector<HTMLElement>('[data-progress]');
+    const serviceSel = form.elements.namedItem('service') as HTMLSelectElement;
+    const masterSel = form.elements.namedItem('master') as HTMLSelectElement;
+    const nameInput = form.elements.namedItem('name') as HTMLInputElement;
+    const phoneInput = form.elements.namedItem('phone') as HTMLInputElement;
+    const commentInput = form.elements.namedItem('comment') as HTMLTextAreaElement;
+    const consentInput = form.elements.namedItem('consent') as HTMLInputElement;
+    const timeInputs = Array.from(form.querySelectorAll<HTMLInputElement>('input[name="time"]'));
+    let current = 0;
+
+    /* ---------- Даты: ближайшие 14 дней (считаются в браузере, всегда актуальны) ---------- */
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const toValue = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    const weekday = new Intl.DateTimeFormat('ru-RU', { weekday: 'short' });
+    const dayMonth = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'short' });
+    const fullDate = new Intl.DateTimeFormat('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+    const lastSlotHour = 20;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    // Если сегодня уже поздно для записи — начинаем с завтра
+    const startOffset = new Date().getHours() >= lastSlotHour - 1 ? 1 : 0;
+
+    daysWrap.textContent = '';
+    for (let i = startOffset; i < startOffset + 14; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      const label = document.createElement('label');
+      label.className = 'pick';
+      const input = document.createElement('input');
+      input.className = 'pick__input';
+      input.type = 'radio';
+      input.name = 'date';
+      input.value = toValue(d);
+      input.dataset.label = fullDate.format(d);
+      const box = document.createElement('span');
+      box.className = 'pick__box';
+      const wd = weekday.format(d);
+      const top = i === 0 ? 'Сегодня' : i === 1 ? 'Завтра' : wd.charAt(0).toUpperCase() + wd.slice(1);
+      box.textContent = top;
+      const small = document.createElement('small');
+      small.textContent = dayMonth.format(d).replace('.', '');
+      box.append(small);
+      label.append(input, box);
+      daysWrap.append(label);
+    }
+    const dateInputs = Array.from(daysWrap.querySelectorAll<HTMLInputElement>('input[name="date"]'));
+
+    // На сегодня отключаем прошедшее время (с запасом 1 час)
+    const updateSlots = () => {
+      const picked = dateInputs.find((i) => i.checked);
+      const isToday = picked?.value === toValue(today);
+      const minHour = new Date().getHours() + 1;
+      timeInputs.forEach((t) => {
+        const hour = Number(t.value.slice(0, 2));
+        t.disabled = Boolean(isToday) && hour <= minHour;
+        if (t.disabled && t.checked) t.checked = false;
+      });
+    };
+    dateInputs.forEach((i) => i.addEventListener('change', updateSlots));
+
+    /* ---------- Маска телефона: +7 (999) 123-45-67 ---------- */
+    const phoneDigits = (value: string) => {
+      let d = value.replace(/\D/g, '');
+      if (d.startsWith('8')) d = '7' + d.slice(1);
+      if (d && !d.startsWith('7')) d = '7' + d;
+      return d.slice(0, 11);
+    };
+    const formatPhone = (digits: string) => {
+      if (!digits) return '';
+      const p = digits.slice(1);
+      let out = '+7';
+      if (p.length > 0) out += ' (' + p.slice(0, 3);
+      if (p.length >= 3) out += ')';
+      if (p.length > 3) out += ' ' + p.slice(3, 6);
+      if (p.length > 6) out += '-' + p.slice(6, 8);
+      if (p.length > 8) out += '-' + p.slice(8, 10);
+      return out;
+    };
+    phoneInput.addEventListener('input', (e) => {
+      // При удалении символов не переформатируем — иначе курсор «застревает» на скобках
+      if (e instanceof InputEvent && e.inputType.startsWith('delete')) return;
+      phoneInput.value = formatPhone(phoneDigits(phoneInput.value));
+    });
+    phoneInput.addEventListener('blur', () => {
+      phoneInput.value = formatPhone(phoneDigits(phoneInput.value));
+    });
+
+    /* ---------- Ошибки полей ---------- */
+    const setError = (el: HTMLElement, errorId: string, message: string) => {
+      const box = document.getElementById(errorId);
+      if (box) box.textContent = message;
+      if (message) el.setAttribute('aria-invalid', 'true');
+      else el.removeAttribute('aria-invalid');
+      return !message;
+    };
+
+    const validateStep = (index: number): boolean => {
+      let firstInvalid: HTMLElement | null = null;
+      const check = (ok: boolean, el: HTMLElement) => {
+        if (!ok && !firstInvalid) firstInvalid = el;
+        return ok;
+      };
+      let valid = true;
+
+      if (index === 0) {
+        valid = check(setError(serviceSel, 'bk-service-err', serviceSel.value ? '' : 'Выберите услугу'), serviceSel) && valid;
+      }
+      if (index === 1) {
+        const dateOk = dateInputs.some((i) => i.checked);
+        valid = check(setError(daysWrap, 'bk-date-err', dateOk ? '' : 'Выберите дату'), dateInputs[0] ?? daysWrap) && valid;
+        const timeOk = timeInputs.some((i) => i.checked);
+        const firstTime = timeInputs.find((i) => !i.disabled) ?? timeInputs[0];
+        if (firstTime) {
+          valid = check(setError(firstTime.closest('.slots') as HTMLElement, 'bk-time-err', timeOk ? '' : 'Выберите время'), firstTime) && valid;
+        }
+      }
+      if (index === 2) {
+        const name = nameInput.value.trim();
+        valid = check(setError(nameInput, 'bk-name-err', name.length >= 2 ? '' : 'Введите имя'), nameInput) && valid;
+        const phoneOk = phoneDigits(phoneInput.value).length === 11;
+        valid =
+          check(setError(phoneInput, 'bk-phone-err', phoneOk ? '' : 'Введите номер полностью: +7 (999) 123-45-67'), phoneInput) &&
+          valid;
+        valid =
+          check(
+            setError(consentInput, 'bk-consent-err', consentInput.checked ? '' : 'Нужно согласие, чтобы мы могли вам перезвонить'),
+            consentInput,
+          ) && valid;
+      }
+
+      if (firstInvalid) (firstInvalid as HTMLElement).focus();
+      return valid;
+    };
+
+    // Ошибка пропадает, как только поле исправили
+    form.addEventListener('change', (e) => {
+      const t = e.target;
+      if (t === serviceSel) setError(serviceSel, 'bk-service-err', '');
+      if (t instanceof HTMLInputElement && t.name === 'date') setError(daysWrap, 'bk-date-err', '');
+      if (t instanceof HTMLInputElement && t.name === 'time') {
+        const slots = t.closest('.slots');
+        if (slots instanceof HTMLElement) setError(slots, 'bk-time-err', '');
+      }
+      if (t === consentInput) setError(consentInput, 'bk-consent-err', '');
+    });
+    nameInput.addEventListener('input', () => setError(nameInput, 'bk-name-err', ''));
+    phoneInput.addEventListener('input', () => setError(phoneInput, 'bk-phone-err', ''));
+
+    /* ---------- Переключение шагов ---------- */
+    const showStep = (index: number, focus = true) => {
+      current = index;
+      steps.forEach((s, i) => (s.hidden = i !== index));
+      if (stepNum) stepNum.textContent = String(index + 1);
+      if (progress) progress.style.width = `${((index + 1) / steps.length) * 100}%`;
+      if (focus) {
+        const first = steps[index]?.querySelector<HTMLElement>('select, input:not([disabled]), textarea');
+        first?.focus({ preventScroll: true });
+        form.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    };
+
+    form.addEventListener('click', (e) => {
+      if (!(e.target instanceof Element)) return;
+      if (e.target.closest('[data-next]') && validateStep(current)) showStep(current + 1);
+      if (e.target.closest('[data-prev]')) showStep(current - 1);
+    });
+
+    // Enter в полях шагов 1–2 не должен отправлять форму
+    form.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && current < steps.length - 1 && !(e.target instanceof HTMLTextAreaElement)) {
+        const isButton = e.target instanceof HTMLButtonElement;
+        if (!isButton) {
+          e.preventDefault();
+          if (validateStep(current)) showStep(current + 1);
+        }
+      }
+    });
+
+    showStep(0, false);
+
+    /* ---------- Отправка (демо) ---------- */
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (current !== steps.length - 1) return;
+      if (!validateStep(current)) return;
+
+      const serviceText = serviceSel.selectedOptions[0]?.textContent?.trim() ?? '';
+      const masterText = masterSel.value ? (masterSel.selectedOptions[0]?.textContent?.trim() ?? '') : 'любой мастер';
+      const dateText = dateInputs.find((i) => i.checked)?.dataset.label ?? '';
+      const timeText = timeInputs.find((i) => i.checked)?.value ?? '';
+      const name = nameInput.value.trim();
+      const phone = phoneInput.value;
+      const comment = commentInput.value.trim();
+
+      const summary = [
+        `Услуга: ${serviceText}`,
+        `Мастер: ${masterText}`,
+        `Когда: ${dateText}, ${timeText}`,
+        `Телефон: ${phone}`,
+        comment ? `Комментарий: ${comment}` : '',
+      ]
+        .filter(Boolean)
+        .join('\n');
+
+      const title = success.querySelector<HTMLElement>('[data-success-title]');
+      const summaryBox = success.querySelector<HTMLElement>('[data-success-summary]');
+      const wa = success.querySelector<HTMLAnchorElement>('[data-wa-link]');
+      // textContent — безопасно: введённый текст не превратится в HTML
+      if (title) title.textContent = `Спасибо, ${name}!`;
+      if (summaryBox) summaryBox.textContent = summary;
+      if (wa) {
+        const text = `Здравствуйте! Хочу записаться.\n${summary}\nИмя: ${name}`;
+        wa.href = `https://wa.me/${form.dataset.whatsapp ?? ''}?text=${encodeURIComponent(text)}`;
+      }
+
+      form.hidden = true;
+      success.hidden = false;
+      success.focus();
+    });
+
+    success.querySelector('[data-again]')?.addEventListener('click', () => {
+      form.reset();
+      updateSlots();
+      success.hidden = true;
+      form.hidden = false;
+      showStep(0);
+    });
+
+    /* ---------- Кнопки «Записаться» по всему сайту ---------- */
+    // У услуги/мастера/акции кнопка подставляет выбор в форму
+    document.addEventListener('click', (e) => {
+      if (!(e.target instanceof Element)) return;
+      const trigger = e.target.closest<HTMLElement>('[data-book-service], [data-book-master], [data-book-comment]');
+      if (!trigger) return;
+      const { bookService, bookMaster, bookComment } = trigger.dataset;
+      if (bookService) {
+        serviceSel.value = bookService;
+        setError(serviceSel, 'bk-service-err', '');
+      }
+      if (bookMaster) masterSel.value = bookMaster;
+      if (bookComment) commentInput.value = bookComment;
+      if (!form.hidden && current !== 0) showStep(0, false);
+    });
+  }
+</script>

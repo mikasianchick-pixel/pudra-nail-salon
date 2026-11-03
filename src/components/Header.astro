@@ -1,0 +1,298 @@
+---
+import { site, nav } from '../data/site';
+---
+
+<header class="header" data-header>
+  <div class="container header__inner">
+    <a href="#top" class="logo">
+      <span class="logo__name">{site.name}</span>
+      <span class="logo__tag">{site.tagline}</span>
+    </a>
+
+    <nav class="nav" id="site-nav" aria-label="Основное меню" data-nav>
+      <ul class="nav__list">
+        {
+          nav.map((item) => (
+            <li>
+              <a class="nav__link" href={item.href}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="nav__mobile-extra">
+        <a class="btn btn--primary" href="#booking">Записаться онлайн</a>
+        <a class="nav__phone" href={site.phoneHref}>{site.phone}</a>
+        <p class="nav__hours">{site.hours}</p>
+      </div>
+    </nav>
+
+    <div class="header__actions">
+      <a class="header__phone" href={site.phoneHref}>{site.phone}</a>
+      <a class="btn btn--primary btn--sm header__cta" href="#booking">Записаться</a>
+      <button
+        class="burger"
+        type="button"
+        aria-expanded="false"
+        aria-controls="site-nav"
+        aria-label="Открыть меню"
+        data-burger
+      >
+        <span class="burger__line"></span>
+        <span class="burger__line"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    transition:
+      background-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .header.is-scrolled {
+    background: rgb(251 247 243 / 0.9);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 1px 0 var(--c-line);
+  }
+
+  /* backdrop-filter «запирает» position:fixed меню внутри шапки — при открытом меню отключаем */
+  .header.is-open {
+    background: var(--c-bg);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    height: var(--header-h);
+  }
+
+  .logo {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .logo__name {
+    font-family: var(--f-serif);
+    font-size: 1.875rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .logo__tag {
+    margin-top: 7px;
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+  }
+
+  .nav__list {
+    display: flex;
+    gap: 2rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav__link {
+    position: relative;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .nav__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s var(--ease);
+  }
+
+  .nav__link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  .nav__mobile-extra {
+    display: none;
+  }
+
+  .header__actions {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .header__phone {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .burger {
+    display: none;
+  }
+
+  /* ---------- Телефон и планшет ---------- */
+  @media (max-width: 960px) {
+    .header__phone,
+    .header__cta {
+      display: none;
+    }
+
+    .burger {
+      display: grid;
+      place-content: center;
+      gap: 7px;
+      width: 48px;
+      height: 48px;
+      margin-right: -10px;
+      padding: 0;
+      border: 0;
+      background: none;
+    }
+
+    .burger__line {
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: currentColor;
+      transition: transform 0.3s var(--ease);
+    }
+
+    .header.is-open .burger__line:first-child {
+      transform: translateY(4.25px) rotate(45deg);
+    }
+
+    .header.is-open .burger__line:last-child {
+      transform: translateY(-4.25px) rotate(-45deg);
+    }
+
+    .nav {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: calc(var(--header-h) + 2rem) var(--gutter) 2rem;
+      background: var(--c-bg);
+      overflow-y: auto;
+      opacity: 0;
+      visibility: hidden;
+      transition:
+        opacity 0.3s ease,
+        visibility 0s linear 0.3s;
+    }
+
+    .header.is-open .nav {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.3s ease;
+    }
+
+    .nav__list {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .nav__link {
+      display: block;
+      padding: 0.5rem 0;
+      font-family: var(--f-serif);
+      font-size: 2.5rem;
+      font-weight: 500;
+    }
+
+    .nav__link::after {
+      display: none;
+    }
+
+    .nav__mobile-extra {
+      display: grid;
+      gap: 1rem;
+      padding-top: 2rem;
+    }
+
+    .nav__phone {
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .nav__hours {
+      color: var(--c-muted);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav,
+    .burger__line {
+      transition: none !important;
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const burger = document.querySelector<HTMLButtonElement>('[data-burger]');
+  const nav = document.querySelector<HTMLElement>('[data-nav]');
+
+  if (header && burger && nav) {
+    // Фон шапки при прокрутке
+    const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+    // Первую проверку делаем в следующем кадре — без принудительного пересчёта раскладки при загрузке
+    requestAnimationFrame(onScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    const setOpen = (open: boolean) => {
+      header.classList.toggle('is-open', open);
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+      document.body.style.overflow = open ? 'hidden' : '';
+    };
+
+    burger.addEventListener('click', () => setOpen(!header.classList.contains('is-open')));
+
+    // Закрываем меню по клику на ссылку и по Esc
+    nav.addEventListener('click', (e) => {
+      if (e.target instanceof Element && e.target.closest('a')) setOpen(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && header.classList.contains('is-open')) {
+        setOpen(false);
+        burger.focus();
+      }
+    });
+
+    // Если окно расширили до компьютера — меню сбрасываем
+    window.matchMedia('(min-width: 961px)').addEventListener('change', (e) => {
+      if (e.matches) setOpen(false);
+    });
+  }
+</script>

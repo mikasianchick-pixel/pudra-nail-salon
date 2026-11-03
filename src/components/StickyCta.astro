@@ -1,0 +1,73 @@
+---
+// Липкая кнопка «Записаться» — только на телефоне.
+// Прячется, пока виден первый экран (там своя кнопка) и когда на экране форма записи.
+---
+
+<div class="sticky" data-sticky>
+  <a class="btn btn--primary sticky__btn" href="#booking">Записаться онлайн</a>
+</div>
+
+<style>
+  .sticky {
+    display: none;
+  }
+
+  @media (max-width: 960px) {
+    .sticky {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 40;
+      display: block;
+      padding: 0.75rem var(--gutter) calc(0.75rem + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, rgb(251 247 243 / 0.95) 60%, rgb(251 247 243 / 0));
+      transition:
+        transform 0.35s var(--ease),
+        visibility 0s linear 0s;
+    }
+
+    .sticky.is-hidden {
+      transform: translateY(110%);
+      visibility: hidden;
+      transition:
+        transform 0.35s var(--ease),
+        visibility 0s linear 0.35s;
+    }
+
+    .sticky__btn {
+      width: 100%;
+      box-shadow: 0 10px 30px rgb(122 46 58 / 0.3);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sticky,
+    .sticky.is-hidden {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const sticky = document.querySelector<HTMLElement>('[data-sticky]');
+  const hero = document.querySelector<HTMLElement>('.hero');
+  const booking = document.getElementById('booking');
+
+  if (sticky && hero && booking && 'IntersectionObserver' in window) {
+    const visible = new Set<Element>();
+    const update = () => sticky.classList.toggle('is-hidden', visible.size > 0);
+
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) visible.add(entry.target);
+        else visible.delete(entry.target);
+      }
+      update();
+    });
+
+    sticky.classList.add('is-hidden');
+    io.observe(hero);
+    io.observe(booking);
+  }
+</script>
